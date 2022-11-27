@@ -1,4 +1,4 @@
-import { server, Server } from './Server';
+import { server, Server } from '../core/Server';
 //import { dataBase } from './dataBase';
 import { QueryTypes } from 'sequelize'
 

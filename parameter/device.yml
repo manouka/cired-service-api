@@ -1,8 +1,0 @@
-device:
-  cired_gateway:
-    address: http://192.168.0.201
-    username: admin
-    password: alcante
-
-  open_hab:
-  
