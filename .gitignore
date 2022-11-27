@@ -1,1 +1,15 @@
-node_modules
+#configuration file
+src/app/parameter/*
+
+# Compiled binary addons (https://nodejs.org/api/addons.html)
+dist/
+
+# Dependency directories
+node_modules/
+
+# dotenv environment variables file
+.env
+
+# package lock npm
+package-lock.json
+
