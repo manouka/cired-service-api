@@ -40,20 +40,15 @@ class RequestService {
             throw new exceptions_1.RequestException(exceptions_1.RequestException.methodNotAllowed, `Request method ${request.method} not allowed.`);
         }
         let query = request.payload && request.payload.query ? (0, querystring_1.stringify)(request.payload.query) : '';
-        let path = `${request.host}${request.port ? `:${request.port}` : ''}${request.path}?${query}`;
+        let path = `${request.host}${request.port ? `:${request.port}` : ''}${request.path}${query ? `?${query}` : ''}`;
         var config = {
             method: request.method,
             url: path,
             headers: request.headers,
+            timeout: request.timeout,
             data: request.payload && request.payload.body ? request.payload.body : '',
-            timeout: 500,
         };
         return (0, axios_1.default)(config);
-        if (request.method == Request_1.RequestMethod.GET) {
-            return axios_1.default.get(path, { headers: request.headers, timeout: 500 });
-        }
-        if (request.method == Request_1.RequestMethod.POST) {
-        }
     }
 }
 exports.RequestService = RequestService;

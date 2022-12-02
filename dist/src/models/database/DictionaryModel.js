@@ -6,13 +6,8 @@ var __decorate = (this && this.__decorate) || function (decorators, target, key,
     return c > 3 && r && Object.defineProperty(target, key, r), r;
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.DictionaryModel = exports.ComponentType = void 0;
+exports.DictionaryModel = void 0;
 const sequelize_typescript_1 = require("sequelize-typescript");
-var ComponentType;
-(function (ComponentType) {
-    ComponentType[ComponentType["ciredCommandEntree"] = 0] = "ciredCommandEntree";
-    ComponentType[ComponentType["ciredCommandSortie"] = 1] = "ciredCommandSortie";
-})(ComponentType = exports.ComponentType || (exports.ComponentType = {}));
 let DictionaryModel = class DictionaryModel extends sequelize_typescript_1.Model {
 };
 __decorate([

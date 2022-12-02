@@ -54,7 +54,7 @@ export class OrmModelFactory {
         let ModelGeneric: any = model;
 
         let sequelize = this.sequelize;
-console.log(modelDefinition)
+
         ModelGeneric.init(this.getAttribute(entity), { sequelize, modelName: entity.name, tableName: modelDefinition.table, timestamps: false })
 
     }

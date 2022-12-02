@@ -1,6 +1,6 @@
 
 import { RequestAuthorization } from "./Request";
-import { IsString, IsNumber, IsOptional, IsPort, IsUrl, IsInstance, IsIn, IsEnum, IsObject } from "class-validator";
+import { IsString, IsNumber, IsOptional, IsPort, IsUrl, IsInstance, IsIn, IsEnum, IsObject, isValidationOptions } from "class-validator";
 
 
 export enum CoordinatorType {
@@ -19,7 +19,6 @@ export interface CoordinatorInterface {
     port?: number;
     authorization?: RequestAuthorization;
     externalInformation?: unknown;
-  //  public components: Array<ComponentModel>
 }
 
 
@@ -37,7 +36,7 @@ export class Coordinator implements CoordinatorInterface {
     @IsString()
     public type: CoordinatorType;
 
-    @IsUrl()
+    @IsString()
     public host: string;
 
     @IsPort()

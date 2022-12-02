@@ -7,7 +7,7 @@ class CoordinatorRepository {
 
         const [coordinatorModel, created] = await CoordinatorModel.findOrCreate({
             where: { host: coordinator.host },
-            defaults: { coordinator }
+            defaults: <any>coordinator
         });
 
         return coordinatorModel;
@@ -23,7 +23,7 @@ class CoordinatorRepository {
         return CoordinatorModel.findAll();
     }
 
-    public findByInstallationId(installationId: number): Promise<Array<CoordinatorModel>> {
+    public findAllByInstallationId(installationId: number): Promise<Array<CoordinatorModel>> {
         return CoordinatorModel.findAll({ where: { installationId : installationId } });
     }
 }

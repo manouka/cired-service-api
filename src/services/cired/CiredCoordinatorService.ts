@@ -7,22 +7,15 @@ import { Coordinator, CoordinatorInterface } from "../../entities/Coordinator";
 import { Request, RequestMethod } from "../../entities/Request";
 import * as xml2js from 'xml2js';
 import { requestService } from "../request/RequestService";
-import { ComponentType } from "../../models/database/ComponentModel";
 import { CiredCommand } from "../../entities/cired/CiredCommand";
 import { CiredActionEntree, CiredActionSystem, CiredAddress, CiredAddressRange, CiredAddressScanRange, CiredArea, CiredCommandType } from "../../entities/cired/describe";
-import { CiredResponse } from "src/entities/cired/CiredResponse";
-
-
-//import { CiredCommandAbtsract } from "../../entities/cired/CiredCommandEntree";
-
-/**
- * Dépendances internes
- */
+import { CiredResponse } from "../../entities/cired/CiredResponse";
+import { CoordinatorServiceInterface } from "../CoordinatorService";
 
 /**
  * 
  */
-class CiredCoordinatorService {
+class CiredCoordinatorService implements CoordinatorServiceInterface {
 
     protected readonly retryCount: number = 5;
 
@@ -35,7 +28,7 @@ class CiredCoordinatorService {
         this.xmlParser = new xml2js.Parser({ explicitArray: false });
     }
 
-    public async requestInformation(coordinator: Coordinator): Promise<Coordinator> {
+    public async getInformation(coordinator: Coordinator): Promise<Coordinator> {
 
         /**
          * préparation de l'entité de requete
@@ -73,25 +66,40 @@ class CiredCoordinatorService {
              * préparation de l'entité de requete
              */
             let request = new Request();
+            request.authorization = coordinator.authorization;
             request.host = coordinator.host;
             request.port = coordinator.port;
             request.method = RequestMethod.GET;
             request.path = this.requestPath;
             request.payload.query = command;
+            request.timeout = 50;
 
             requestList.push(request);
         }
 
-        let requestResponseList: AxiosResponse[] = <AxiosResponse[]>await requestService.sendList(requestList);
-
         let responseCiredList: CiredResponse[] = [];
-        for (let response of requestResponseList) {
-            if (response.status != 200) {
-                continue;
-            }
+        for (let i = 0; i < requestList.length; i++) {
+            let requests: Array<Request> = requestList.slice(i * 3, i * 3 + 3)
+            if (requests.length > 0) {
+                console.log(requests)
+                let requestResponseList: AxiosResponse[] = <AxiosResponse[]>await requestService.sendList(requestList);
 
-            responseCiredList.push(await this.buildResponse(response.data));
+                let j = 0;
+                for (let response of requestResponseList) {
+                    if (response.status != 200) {
+                        continue;
+                    }
+
+                    commandList[i * 3 + j].setResponse(await this.buildResponse(response.data));
+                    j++;
+
+                    responseCiredList.push(await this.buildResponse(response.data));
+                }
+
+            }
         }
+
+        console.log(responseCiredList)
 
         return responseCiredList;
     }
@@ -114,26 +122,25 @@ class CiredCoordinatorService {
         request.method = RequestMethod.GET;
         request.path = this.requestPath;
         request.payload.query = command;
+        request.timeout = 200;
 
         let requestResponse: AxiosResponse
-    
-        for (let i = 0 ; i < this.retryCount ; i++) {
-            try {
-                requestResponse = <AxiosResponse>await requestService.send(request);
-            } catch (error) {
-            }   
 
-            if (requestResponse && requestResponse.status == 200) {
-    
-                return await this.buildResponse(requestResponse.data);
-            }
+        //  for (let i = 0 ; i < this.retryCount ; i++) {
+        try {
+            requestResponse = <AxiosResponse>await requestService.send(request);
+
+        } catch (error) {
+
         }
 
-        return await this.buildResponse(); 
-    }
+        if (requestResponse && requestResponse.status == 200) {
 
-    private async buildRequest(coordinator: Coordinator) {
+            return await this.buildResponse(requestResponse.data);
+        }
+        //  }
 
+        return await this.buildResponse();
     }
 
     /**

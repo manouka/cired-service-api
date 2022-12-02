@@ -6,8 +6,7 @@ import { Installation } from '../entities/Installation';
 import { entityMapper } from '../tool/Mapper';
 import { installationService } from '../services/InstallationService';
 import { coordinatorService } from '../services/CoordinatorService';
-import { CiredCommand } from '../entities/cired/CiredCommand';
-import { CiredActionEntree, CiredActionSortie, CiredCommandType, CiredFlag, CiredRelay, CiredState } from '../entities/cired/describe';
+import { deviceService } from '../services/DeviceService';
 
 @Controller('/installation')
 export default class InstallationController {
@@ -82,6 +81,15 @@ console.log(command)
     ) {
 
         response.status(200).send(await coordinatorService.getAllByInstallationId(parseInt(request.params.installationId)))
+    };
+
+    @Get('/:installationId([0-9]+)/devices')
+    public async getAllDevices(
+        request: Request,
+        response: Response,
+    ) {
+
+        response.status(200).send(await deviceService.getAllByInstallationId(parseInt(request.params.installationId)))
     };
 
     @Patch('/:installationId([0-9]+)/coordinators/:coordinatorId([0-9]+)')

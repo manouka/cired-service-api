@@ -15,7 +15,11 @@ const valideCiredCommand = (command) => {
 exports.valideCiredCommand = valideCiredCommand;
 class CiredCommandValidator {
     static address(command) {
-        let addressRange = command.getType() == describe_1.CiredCommandType.entree ? describe_1.CiredAddressEntreeRange : command.getType() == describe_1.CiredCommandType.sortie ? describe_1.CiredAddressSortieRange : [];
+        let type = command.getType();
+        let addressRange = type == describe_1.CiredCommandType.entree ? describe_1.CiredAddressEntreeRange :
+            type == describe_1.CiredCommandType.sortie ? describe_1.CiredAddressSortieRange :
+                type == describe_1.CiredCommandType.dmx ? describe_1.CiredAddressDmxRange :
+                    [];
         if (!addressRange.includes(command.getAddress())) {
             throw new exceptions_1.CiredAddressException(exceptions_1.CiredAddressException.addressNotAllowed, `Cired address ${command.getAddress()} is not allowed`);
         }
@@ -27,7 +31,11 @@ class CiredCommandValidator {
     }
     static cmd(command) {
         CiredCommandValidator.type(command);
-        let actionAllowed = command.getType() == describe_1.CiredCommandType.entree ? describe_1.CiredActionEntree : command.getType() == describe_1.CiredCommandType.sortie ? describe_1.CiredActionSortie : [];
+        let type = command.getType();
+        let actionAllowed = type == describe_1.CiredCommandType.entree ? describe_1.CiredActionEntree :
+            type == describe_1.CiredCommandType.sortie ? describe_1.CiredActionSortie :
+                type == describe_1.CiredCommandType.dmx ? describe_1.CiredActionDmx :
+                    [];
         if (!(0, Validator_1.IsValueAllowed)(command.getAction(), actionAllowed)) {
             throw new exceptions_1.CiredActionException(exceptions_1.CiredActionException.notAllowed, `Cired command ${command.getAction()} is not allowed for command type ${command.getType()}`);
         }

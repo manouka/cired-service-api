@@ -5,6 +5,7 @@ import { RequestAuthorization, RequestAuthorizationType } from '../../entities/R
 import { InstallationModel } from './InstallationModel';
 import { InstallationInterface } from '../../entities/Installation';
 import { CoordinatorInterface, CoordinatorType } from '../../entities/Coordinator';
+import { DeviceModel } from './DeviceModel';
 
 /**
  * Commande d'entrée
@@ -47,8 +48,8 @@ export class CoordinatorModel extends Model implements CoordinatorInterface {
     @BelongsTo(() => InstallationModel)
     public installation: InstallationModel;  
 
-    @HasMany(() => ComponentModel)
-    public components: Array<ComponentModel>
+    @HasOne(() => DeviceModel)
+    public device: DeviceModel
 
     @CreatedAt
     creationDate: Date;

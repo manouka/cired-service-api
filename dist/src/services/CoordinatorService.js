@@ -10,15 +10,17 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
 };
 Object.defineProperty(exports, "__esModule", { value: true });
 exports.coordinatorService = void 0;
+const Coordinator_1 = require("../entities/Coordinator");
 const InstallationService_1 = require("./InstallationService");
 const CoordinatorRepository_1 = require("../repositories/CoordinatorRepository");
 const CiredCoordinatorService_1 = require("./cired/CiredCoordinatorService");
 const CoordinatorExceptions_1 = require("../exceptions/CoordinatorExceptions");
+const OpenhabCoordinatorService_1 = require("./openhab/OpenhabCoordinatorService");
 class CoordinatorService {
     upsert(coordinator, checkExistance = true) {
         return __awaiter(this, void 0, void 0, function* () {
             if (checkExistance) {
-                coordinator = yield this.checkExistance(coordinator);
+                coordinator = yield this.getInformation(coordinator);
             }
             let coordinatorModel = coordinator.id ? yield this.getById(coordinator.id) : yield CoordinatorRepository_1.coordinatorRepository.create(coordinator);
             Object.assign(coordinatorModel, coordinator);
@@ -41,7 +43,7 @@ class CoordinatorService {
     }
     getAllByInstallationId(installationId) {
         return __awaiter(this, void 0, void 0, function* () {
-            let coordinators = yield CoordinatorRepository_1.coordinatorRepository.findByInstallationId(installationId);
+            let coordinators = yield CoordinatorRepository_1.coordinatorRepository.findAllByInstallationId(installationId);
             if (!coordinators) {
                 throw new CoordinatorExceptions_1.CoordinatorException(CoordinatorExceptions_1.CoordinatorException.notFound, `Not Coordinator found in installation ${installationId}`);
             }
@@ -51,6 +53,9 @@ class CoordinatorService {
     deleteById(id) {
         return __awaiter(this, void 0, void 0, function* () {
             let coordinator = yield this.getById(id);
+            if (!coordinator) {
+                throw new CoordinatorExceptions_1.CoordinatorException(CoordinatorExceptions_1.CoordinatorException.notFound, `Coordinator id ${id} not found`);
+            }
             coordinator.destroy();
         });
     }
@@ -65,20 +70,23 @@ class CoordinatorService {
             yield coordinatorModel.save();
         });
     }
-    checkExistance(coordinator) {
+    getInformation(coordinator) {
         return __awaiter(this, void 0, void 0, function* () {
             try {
-                return yield this.requestInformation(coordinator);
+                return this.getDeviceService(coordinator.type).getInformation(coordinator);
             }
             catch (error) {
                 throw new CoordinatorExceptions_1.CoordinatorException(CoordinatorExceptions_1.CoordinatorException.noReply, `Coordinator ${coordinator.host} don't respond`);
             }
         });
     }
-    requestInformation(coordinator) {
-        return __awaiter(this, void 0, void 0, function* () {
-            return CiredCoordinatorService_1.ciredCoordinatorService.requestInformation(coordinator);
-        });
+    getDeviceService(coordinatorType) {
+        if (coordinatorType == Coordinator_1.CoordinatorType.ciredGateway || coordinatorType == Coordinator_1.CoordinatorType.ciredGatewayGsm) {
+            return CiredCoordinatorService_1.ciredCoordinatorService;
+        }
+        else if (coordinatorType == Coordinator_1.CoordinatorType.openhab) {
+            return OpenhabCoordinatorService_1.openhabCoordinatorService;
+        }
     }
 }
 exports.coordinatorService = new CoordinatorService();

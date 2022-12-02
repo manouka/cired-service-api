@@ -15,20 +15,31 @@ var __awaiter = (this && this.__awaiter) || function (thisArg, _arguments, P, ge
     });
 };
 Object.defineProperty(exports, "__esModule", { value: true });
+const DeviceService_1 = require("../services/DeviceService");
 const Controller_1 = require("../core/router/Controller");
 const Method_1 = require("../core/router/Method");
-let InstallationController = class InstallationController {
+let DeviceController = class DeviceController {
     getAll(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
+            response.status(200).send(yield DeviceService_1.deviceService.getAll());
+        });
+    }
+    ;
+    getById(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            response.status(200).send(yield DeviceService_1.deviceService.getById(parseInt(request.params.deviceId)));
         });
     }
     ;
 };
 __decorate([
     (0, Method_1.Get)('/')
-], InstallationController.prototype, "getAll", null);
-InstallationController = __decorate([
+], DeviceController.prototype, "getAll", null);
+__decorate([
+    (0, Method_1.Get)('/:deviceId([0-9]+)')
+], DeviceController.prototype, "getById", null);
+DeviceController = __decorate([
     (0, Controller_1.default)('/devices')
-], InstallationController);
-exports.default = InstallationController;
+], DeviceController);
+exports.default = DeviceController;
 //# sourceMappingURL=DeviceController.js.map

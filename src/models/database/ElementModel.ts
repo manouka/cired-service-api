@@ -1,6 +1,7 @@
 
 
 import { Table, Column, Model, DataType, AutoIncrement, PrimaryKey, AllowNull, Is, BelongsTo, ForeignKey, HasMany } from 'sequelize-typescript';
+import { ElementInterface } from '../../entities/Element';
 import { ComponentModel } from './ComponentModel';
 
 
@@ -18,14 +19,21 @@ export class ElementModel extends Model {
 
     @ForeignKey(() => ComponentModel)
     @Column(DataType.INTEGER)
-    componentId: number;
+    public componentId: number;
 
     @Column(DataType.INTEGER)
     public type: ElementType;
 
     @Column(DataType.STRING)
-    public name: string;
+    public allias: string;
 
     @BelongsTo(() => ComponentModel, 'componentId')
     public component: ComponentModel;
+
+    @Column({ 
+        type: DataType.STRING(1024),
+        set(value) { value ? this.setDataValue('parameters', JSON.stringify(value)) : null },
+        get() { const rawValue = this.getDataValue('parameters'); return rawValue ? JSON.parse(rawValue) : null;} 
+    })    
+    public parameters: unknown;
 }

@@ -10,6 +10,7 @@ class CoreDatabase {
             dialect: 'mysql',
             username: databaseConfig.username,
             password: databaseConfig.password,
+            logging: false,
             models: [`${__dirname}/../models/database/**`],
         });
     }

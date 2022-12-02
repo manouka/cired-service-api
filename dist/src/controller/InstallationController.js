@@ -21,6 +21,7 @@ const Installation_1 = require("../entities/Installation");
 const Mapper_1 = require("../tool/Mapper");
 const InstallationService_1 = require("../services/InstallationService");
 const CoordinatorService_1 = require("../services/CoordinatorService");
+const DeviceService_1 = require("../services/DeviceService");
 let InstallationController = class InstallationController {
     create(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
@@ -57,6 +58,12 @@ let InstallationController = class InstallationController {
         });
     }
     ;
+    getAllDevices(request, response) {
+        return __awaiter(this, void 0, void 0, function* () {
+            response.status(200).send(yield DeviceService_1.deviceService.getAllByInstallationId(parseInt(request.params.installationId)));
+        });
+    }
+    ;
     addCoordinator(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
             CoordinatorService_1.coordinatorService.assignToInstallation(parseInt(request.params.installationId), parseInt(request.params.coordinatorId));
@@ -80,6 +87,9 @@ __decorate([
 __decorate([
     (0, Method_1.Get)('/:installationId([0-9]+)/coordinators')
 ], InstallationController.prototype, "getAllCoordinator", null);
+__decorate([
+    (0, Method_1.Get)('/:installationId([0-9]+)/devices')
+], InstallationController.prototype, "getAllDevices", null);
 __decorate([
     (0, Method_1.Patch)('/:installationId([0-9]+)/coordinators/:coordinatorId([0-9]+)')
 ], InstallationController.prototype, "addCoordinator", null);

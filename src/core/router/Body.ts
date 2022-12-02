@@ -44,7 +44,7 @@ export function applyBody(target: any, propertyName: string, descriptor: TypedPr
 
     if (parameterIndex) {
       const { body } = arguments[0];
-      console.log(arguments[0].body)
+
       arguments[parameterIndex] = Object.values(body);
     }
    // let result = originalMethod.apply(this, args);

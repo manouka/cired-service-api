@@ -1,14 +1,10 @@
 
 
-import { Table, Column, Model, DataType, AutoIncrement, PrimaryKey, AllowNull, Is, BelongsTo, ForeignKey, HasMany } from 'sequelize-typescript';
-import { CoordinatorModel } from './CoordinatorModel';
+import { Table, Column, Model, DataType, AutoIncrement, PrimaryKey, AllowNull, Is, BelongsTo, ForeignKey, HasMany, BeforeUpdate, BeforeCreate, BeforeSave } from 'sequelize-typescript';
+import { ComponentType } from '../../entities/Component';
+import { DeviceModel } from './DeviceModel';
 import { ElementModel } from './ElementModel';
 
-
-export type ComponentType = ComponentTypeCired & ComponentTypeOpenhab;
-
-export type ComponentTypeCired = 'entree' | 'sortie' | 'dmx';
-export type ComponentTypeOpenhab = 'openhab';
 
 @Table({ tableName: 'T_COMPONENT' })
 export class ComponentModel extends Model {
@@ -18,7 +14,7 @@ export class ComponentModel extends Model {
     @Column(DataType.INTEGER)
     public id: number;
 
-    @ForeignKey(() => CoordinatorModel)
+    @ForeignKey(() => DeviceModel)
     @Column(DataType.INTEGER)
     public deviceId: number;
 
@@ -29,10 +25,13 @@ export class ComponentModel extends Model {
     public index: number;
 
     @Column(DataType.STRING)
+    public alias: string;
+
+    @Column(DataType.STRING)
     public name: string;
 
-    @BelongsTo(() => CoordinatorModel, 'deviceId')
-    public device: CoordinatorModel;
+    @BelongsTo(() => DeviceModel, 'deviceId')
+    public device: DeviceModel;
 
     @HasMany(() => ElementModel)
     public elements: Array<ElementModel>;
@@ -43,13 +42,4 @@ export class ComponentModel extends Model {
         get() { const rawValue = this.getDataValue('information'); return rawValue ? JSON.parse(rawValue) : null;} 
     })
     public information: string;
-
-
-    /*@Column({ 
-        type: DataType.STRING,
-        set(authorization) { authorization ? this.setDataValue('authorization', JSON.stringify(authorization)) : null },
-        get() { const rawValue = this.getDataValue('authorization'); return rawValue ? JSON.parse(rawValue) : null;} 
-    })*/
-    
-
 }

@@ -66,26 +66,19 @@ export class RequestService {
 
         
         let query = request.payload && request.payload.query ? stringify(<ParsedUrlQueryInput>request.payload.query) : '';
-        let path: string = `${ request.host }${ request.port ? `:${request.port}` : '' }${ request.path }?${ query }`;
+        let path: string = `${ request.host }${ request.port ? `:${request.port}` : '' }${ request.path }${ query ? `?${query}` : '' }`;
 
+    
         var config = {
             method: request.method,
             url: path,
             headers: request.headers,
+            timeout: request.timeout,
             data: request.payload && request.payload.body ? request.payload.body : '',
-            timeout: 500,
+       
         };
 
         return axios(config);
-
-        if (request.method == RequestMethod.GET) {
-            return axios.get(path, { headers: request.headers, timeout: 500 });
-        }
-
-        if (request.method == RequestMethod.POST) {
-            
-            //return axios.post(path, { data : 'ON' }, { headers: request.headers, timeout: 500 });
-        }
     }
 }
 

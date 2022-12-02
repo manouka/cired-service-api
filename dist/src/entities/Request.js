@@ -18,6 +18,7 @@ var RequestMethod;
 class Request {
     constructor() {
         this.headers = {};
+        this.timeout = 500;
         this.payload = new RequestPayload();
         this.authorization = new RequestAuthorization();
     }

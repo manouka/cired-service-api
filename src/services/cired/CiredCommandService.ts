@@ -5,15 +5,6 @@ import { Coordinator } from "../../entities/Coordinator";
 
 class CiredCommandService {
 
-    public scanDeviceCiredByAddress<T>(coordinator: Coordinator, area: CiredArea, address: CiredAddressEntree, type: CiredCommandType) {
-
-
-    }
-
-
-
-
-
 }
 
 export const ciredCommandService: CiredCommandService = new CiredCommandService();

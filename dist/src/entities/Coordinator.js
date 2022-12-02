@@ -29,7 +29,7 @@ __decorate([
     (0, class_validator_1.IsString)()
 ], Coordinator.prototype, "type", void 0);
 __decorate([
-    (0, class_validator_1.IsUrl)()
+    (0, class_validator_1.IsString)()
 ], Coordinator.prototype, "host", void 0);
 __decorate([
     (0, class_validator_1.IsPort)(),

@@ -20,11 +20,12 @@ class CoreDatabase {
             dialect: 'mysql',
             username: databaseConfig.username,
             password: databaseConfig.password,
+            logging: false,
             models: [`${__dirname}/../models/database/**`],
             
         });
 
-      //  this.sequelize.sync({ force: true });
+        //this.sequelize.sync({ force: true });
     }
 
     /**

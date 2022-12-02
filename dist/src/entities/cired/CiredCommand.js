@@ -16,12 +16,17 @@ class CiredCommand {
     getAction() {
         return this.cmd;
     }
+    setResponse(response) {
+        this.response = response;
+    }
     setCompleteAddress(area, address) {
         this.adrh = area;
         this.adrl = address;
-        console.log(describe_1.CiredAddressEntreeRange);
-        console.log(describe_1.CiredAddressEntreeRange.indexOf(this.adrl));
-        this.type = describe_1.CiredAddressEntreeRange.indexOf(this.adrl) > -1 ? describe_1.CiredCommandType.entree : describe_1.CiredAddressSortieRange.indexOf(this.adrl) > -1 ? describe_1.CiredCommandType.sortie : undefined;
+        this.type =
+            describe_1.CiredAddressEntreeRange.indexOf(this.adrl) > -1 ? describe_1.CiredCommandType.entree :
+                describe_1.CiredAddressSortieRange.indexOf(this.adrl) > -1 ? describe_1.CiredCommandType.sortie :
+                    describe_1.CiredAddressDmxRange.indexOf(this.adrl) > -1 ? describe_1.CiredCommandType.dmx :
+                        undefined;
     }
     reset() {
         for (const property in this) {

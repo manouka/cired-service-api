@@ -19,7 +19,6 @@ function applyQueryParams(target, propertyName, descriptor) {
                 arguments[parameterIndex] = Object.values(params)[0];
             }
         }
-        console.log(arguments);
         return method.apply(this, arguments);
     };
 }

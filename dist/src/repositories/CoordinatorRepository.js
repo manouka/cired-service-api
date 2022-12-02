@@ -16,7 +16,7 @@ class CoordinatorRepository {
         return __awaiter(this, void 0, void 0, function* () {
             const [coordinatorModel, created] = yield CoordinatorModel_1.CoordinatorModel.findOrCreate({
                 where: { host: coordinator.host },
-                defaults: { coordinator }
+                defaults: coordinator
             });
             return coordinatorModel;
         });
@@ -27,7 +27,7 @@ class CoordinatorRepository {
     findAll() {
         return CoordinatorModel_1.CoordinatorModel.findAll();
     }
-    findByInstallationId(installationId) {
+    findAllByInstallationId(installationId) {
         return CoordinatorModel_1.CoordinatorModel.findAll({ where: { installationId: installationId } });
     }
 }

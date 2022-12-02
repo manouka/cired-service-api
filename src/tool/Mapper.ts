@@ -3,7 +3,7 @@ import { ParameterException } from '../exceptions';
 
 export const entityMapper = async <T>(entity: new () => T, json: any): Promise<T> => {
     let instance: any = new entity();
-
+  
     Object.keys(json).forEach((key) => {
         instance[key] = json[key];
     });

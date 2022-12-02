@@ -19,7 +19,6 @@ function applyBody(target, propertyName, descriptor) {
         const parameterIndex = Reflect.getOwnMetadata(BODY, target, propertyName);
         if (parameterIndex) {
             const { body } = arguments[0];
-            console.log(arguments[0].body);
             arguments[parameterIndex] = Object.values(body);
         }
         return method.apply(this, arguments);

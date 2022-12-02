@@ -24,8 +24,11 @@ const DeviceService_1 = require("../services/DeviceService");
 let CoordinatorController = class CoordinatorController {
     create(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
-            CoordinatorService_1.coordinatorService.upsert(yield (0, Mapper_1.entityMapper)(Coordinator_1.Coordinator, request.body));
-            response.status(201).send();
+            CoordinatorService_1.coordinatorService.upsert(yield (0, Mapper_1.entityMapper)(Coordinator_1.Coordinator, request.body)).then(() => {
+                response.status(201).send();
+            }).catch((error) => {
+                response.status(400).send(error);
+            });
         });
     }
     ;
@@ -50,21 +53,22 @@ let CoordinatorController = class CoordinatorController {
     ;
     deleteById(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
-            CoordinatorService_1.coordinatorService.deleteById(parseInt(request.params.id));
+            CoordinatorService_1.coordinatorService.deleteById(parseInt(request.params.id)).then(() => {
+                response.status(201).send();
+            }).catch((error) => {
+                response.status(400).send(error);
+            });
             response.status(200).send();
         });
     }
     ;
     getAllDevices(request, response) {
         return __awaiter(this, void 0, void 0, function* () {
-            console.log(typeof request.query.scan != 'undefined');
+            let coordinator = yield CoordinatorService_1.coordinatorService.getById(parseInt(request.params.id));
             if (typeof request.query.scan != 'undefined') {
-                let coordinator = yield CoordinatorService_1.coordinatorService.getById(parseInt(request.params.id));
-                yield DeviceService_1.deviceService.scanAllDevices(coordinator);
+                DeviceService_1.deviceService.scanAllDevices(coordinator);
             }
-            else {
-            }
-            response.status(200).send();
+            response.status(200).send(yield DeviceService_1.deviceService.getAllByCoordinatorId(coordinator.id));
         });
     }
     ;

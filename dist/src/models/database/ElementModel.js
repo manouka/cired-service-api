@@ -28,10 +28,13 @@ __decorate([
 ], ElementModel.prototype, "type", void 0);
 __decorate([
     (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING)
-], ElementModel.prototype, "name", void 0);
+], ElementModel.prototype, "allias", void 0);
 __decorate([
     (0, sequelize_typescript_1.BelongsTo)(() => ComponentModel_1.ComponentModel, 'componentId')
 ], ElementModel.prototype, "component", void 0);
+__decorate([
+    (0, sequelize_typescript_1.Column)(sequelize_typescript_1.DataType.STRING)
+], ElementModel.prototype, "information", void 0);
 ElementModel = __decorate([
     (0, sequelize_typescript_1.Table)({ tableName: 'T_ELEMENT' })
 ], ElementModel);

@@ -1,7 +1,7 @@
 import { IsValueAllowed, IsValueRangedAllowed } from "../../tool/Validator";
 
 import { CiredAddressException, CiredActionException, CiredTypeException, CiredFlagException, CiredStateException, CiredTimerException, CiredRelayException } from "../../exceptions";
-import { CiredAction, ciredActionDescriptor, CiredAddress, CiredAddressRange, CiredArea, CiredCommandType, CiredState, CiredAddressEntreeRange, CiredFlag, CiredRelay, CiredAddressSortieRange, CiredActionEntree, CiredActionSortie } from "./describe";
+import { CiredAction, ciredActionDescriptor, CiredAddress, CiredAddressRange, CiredArea, CiredCommandType, CiredState, CiredAddressEntreeRange, CiredFlag, CiredRelay, CiredAddressSortieRange, CiredActionEntree, CiredActionSortie, CiredAddressDmxRange, CiredActionDmx } from "./describe";
 import { CiredCommand } from "./CiredCommand";
 
 
@@ -317,9 +317,17 @@ export class CiredCommandValidator {
 
 
     public static address(command: CiredCommand) {
-        let addressRange: Array<number> = command.getType() == CiredCommandType.entree ? CiredAddressEntreeRange : command.getType() == CiredCommandType.sortie ? CiredAddressSortieRange : [];
-        if (!addressRange.includes(command.getAddress())) {
+   
+        let type: CiredCommandType = command.getType();
+    
+        let addressRange: Array<number> = 
+        type == CiredCommandType.entree ? CiredAddressEntreeRange : 
+        type == CiredCommandType.sortie ? CiredAddressSortieRange : 
+        type == CiredCommandType.dmx ? CiredAddressDmxRange :     
+        [];
 
+   
+        if (!addressRange.includes(command.getAddress())) {
             throw new CiredAddressException(CiredAddressException.addressNotAllowed, `Cired address ${command.getAddress()} is not allowed`)
         }
     }
@@ -337,7 +345,14 @@ export class CiredCommandValidator {
 
         CiredCommandValidator.type(command);
 
-        let actionAllowed: any = command.getType() == CiredCommandType.entree ? CiredActionEntree : command.getType() == CiredCommandType.sortie ? CiredActionSortie : [];
+        let type: CiredCommandType = command.getType();
+    
+
+        let actionAllowed: any = 
+        type == CiredCommandType.entree ? CiredActionEntree : 
+        type == CiredCommandType.sortie ? CiredActionSortie : 
+        type == CiredCommandType.dmx ? CiredActionDmx :
+        [];
         if (!IsValueAllowed(command.getAction(), actionAllowed)) {
 
             throw new CiredActionException(CiredActionException.notAllowed, `Cired command ${command.getAction()} is not allowed for command type ${command.getType()}`)

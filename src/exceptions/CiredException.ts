@@ -10,6 +10,7 @@ import { BadRequestException, CodeException, NotFoundException } from './HttpExc
  export class CiredGenericException extends BadRequestException {
 
     static readonly generic: CodeException = { errorCode : 'CIRED_GENERIC_001' };
+    static readonly scanAllreadyStarted: CodeException = { errorCode : 'CIRED_GENERIC_010' };
 
     constructor(code: CodeException = CiredGenericException.generic, message: string = "Cired error") {
         super(code);

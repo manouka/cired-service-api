@@ -1,7 +1,8 @@
 
 import { IsArray, IsString } from "class-validator";
 import { CiredAddressException } from "src/exceptions";
-import { CiredActionEntree, CiredAddressEntree, CiredActionSortie, CiredAddressSortie, CiredRelay, CiredFlag, CiredArea, CiredCommandType, CiredAction, CiredState, CiredAddress, CiredAddressEntreeRange, CiredAddressSortieRange } from "./describe";
+import { CiredResponse } from "./CiredResponse";
+import { CiredActionEntree, CiredAddressEntree, CiredActionSortie, CiredAddressSortie, CiredRelay, CiredFlag, CiredArea, CiredCommandType, CiredAction, CiredState, CiredAddress, CiredAddressEntreeRange, CiredAddressSortieRange, CiredAddressDmxRange } from "./describe";
 import { valideCiredCommand } from "./validator";
 //import { IsAction, IsAddress, IsArea, IsFlag, IsRelay, IsState, IsType } from "./validator";
 
@@ -35,6 +36,8 @@ export class CiredCommand {
 
   private type: CiredCommandType;
 
+  private response: CiredResponse;
+
   public constructor (action: CiredAction) {
     this.cmd = action;
   }
@@ -51,13 +54,19 @@ export class CiredCommand {
     return this.cmd;
   }
 
+  public setResponse(response: CiredResponse) {
+    this.response = response;
+  }
+
   public setCompleteAddress(area: CiredArea, address: CiredAddress) {
     this.adrh = area;
     this.adrl = address;
 
-    console.log(CiredAddressEntreeRange)
-    console.log(CiredAddressEntreeRange.indexOf(this.adrl))
-    this.type = CiredAddressEntreeRange.indexOf(this.adrl) > -1 ? CiredCommandType.entree : CiredAddressSortieRange.indexOf(this.adrl) > -1 ? CiredCommandType.sortie : undefined;
+    this.type = 
+    CiredAddressEntreeRange.indexOf(this.adrl) > -1 ? CiredCommandType.entree : 
+    CiredAddressSortieRange.indexOf(this.adrl) > -1 ? CiredCommandType.sortie : 
+    CiredAddressDmxRange.indexOf(this.adrl) > -1 ? CiredCommandType.dmx : 
+    undefined;
 
   }
 

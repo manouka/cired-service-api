@@ -14,27 +14,29 @@ export enum RequestMethod {
 export class Request {
 
     @IsUrl()
-    host: string;
+    public host: string;
 
     @IsPort()
     @IsOptional()
-    port: number;
+    public port: number;
 
     @IsOptional()
-    authorization: RequestAuthorization;
+    public authorization: RequestAuthorization;
    
-    headers: object = {};
+    public headers: object = {};
 
     @IsEnum(RequestMethod)
-    method: RequestMethod;
+    public method: RequestMethod;
 
     @IsUrl()
-    path: string;
+    public path: string;
 
     @IsOptional()
-    proxy?: string;
+    public proxy?: string;
 
-    payload: RequestPayload;
+    public payload: RequestPayload;
+
+    public timeout: number = 500;
 
     public constructor() {
         this.payload = new RequestPayload();

@@ -21,8 +21,7 @@ export function applyQueryParams(target: any, propertyName: string, descriptor: 
         arguments[parameterIndex] = Object.values(params)[0];
       }
     }
-    console.log(arguments)
-    
+
     return method.apply(this, arguments);
   };
 }

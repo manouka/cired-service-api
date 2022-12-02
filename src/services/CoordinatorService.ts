@@ -6,13 +6,22 @@ import { InstallationModel } from "../models/database/InstallationModel";
 import { ciredCoordinatorService } from "./cired/CiredCoordinatorService";
 import { CoordinatorException } from "../exceptions/CoordinatorExceptions";
 import { Model } from "sequelize-typescript";
+import { openhabCoordinatorService } from "./openhab/OpenhabCoordinatorService";
 
-class CoordinatorService {
+export interface CoordinatorServiceInterface {
+
+    getInformation(coordinator: Coordinator): Promise<Coordinator>;
+
+
+}
+
+
+class CoordinatorService implements CoordinatorServiceInterface {
 
     public async upsert(coordinator: Coordinator, checkExistance: boolean = true) {
 
         if (checkExistance) {
-            coordinator = await this.checkExistance(coordinator);
+            coordinator = await this.getInformation(coordinator);
         }
         
         let coordinatorModel: CoordinatorModel = coordinator.id ? await this.getById(coordinator.id) : await coordinatorRepository.create(coordinator);
@@ -41,7 +50,7 @@ class CoordinatorService {
 
     public async getAllByInstallationId(installationId: number): Promise<Array<CoordinatorModel>> {
 
-        let coordinators: Array<CoordinatorModel> = await coordinatorRepository.findByInstallationId(installationId);
+        let coordinators: Array<CoordinatorModel> = await coordinatorRepository.findAllByInstallationId(installationId);
 
         if (!coordinators) {
             throw new CoordinatorException(CoordinatorException.notFound, `Not Coordinator found in installation ${ installationId }`)
@@ -53,6 +62,9 @@ class CoordinatorService {
     public async deleteById(id: number): Promise<void> {
 
         let coordinator: CoordinatorModel = await this.getById(id);
+        if (!coordinator) {
+            throw new CoordinatorException(CoordinatorException.notFound, `Coordinator id ${id} not found`)
+        }
 
         coordinator.destroy();
     } 
@@ -78,19 +90,28 @@ class CoordinatorService {
         await coordinatorModel.save()
     }
     
-
-    private async checkExistance(coordinator: Coordinator): Promise<Coordinator> {
+    public async getInformation(coordinator: Coordinator): Promise<Coordinator> {
         try {
-            return await this.requestInformation(coordinator);
+            return this.getDeviceService(coordinator.type).getInformation(coordinator);
         } catch (error) {
 
             throw new CoordinatorException(CoordinatorException.noReply, `Coordinator ${coordinator.host} don't respond`)
         }
+      
     }
 
-    private async requestInformation(coordinator: Coordinator): Promise<Coordinator> {
+    /**
+     * 
+     * @param coordinatorType 
+     * @returns 
+     */
+     private getDeviceService(coordinatorType: CoordinatorType): CoordinatorServiceInterface {
+        if (coordinatorType == CoordinatorType.ciredGateway || coordinatorType == CoordinatorType.ciredGatewayGsm) {
+            return ciredCoordinatorService;
+        } else if (coordinatorType == CoordinatorType.openhab) {
+            return openhabCoordinatorService;    
+        }
 
-        return ciredCoordinatorService.requestInformation(coordinator);
     }
 
 }

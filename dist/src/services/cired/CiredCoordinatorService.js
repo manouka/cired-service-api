@@ -20,7 +20,7 @@ class CiredCoordinatorService {
         this.infoPath = '/info.xml';
         this.xmlParser = new xml2js.Parser({ explicitArray: false });
     }
-    requestInformation(coordinator) {
+    getInformation(coordinator) {
         return __awaiter(this, void 0, void 0, function* () {
             let request = new Request_1.Request();
             request.host = coordinator.host;
@@ -41,21 +41,33 @@ class CiredCoordinatorService {
             let requestList = [];
             for (let command of commandList) {
                 let request = new Request_1.Request();
+                request.authorization = coordinator.authorization;
                 request.host = coordinator.host;
                 request.port = coordinator.port;
                 request.method = Request_1.RequestMethod.GET;
                 request.path = this.requestPath;
                 request.payload.query = command;
+                request.timeout = 50;
                 requestList.push(request);
             }
-            let requestResponseList = yield RequestService_1.requestService.sendList(requestList);
             let responseCiredList = [];
-            for (let response of requestResponseList) {
-                if (response.status != 200) {
-                    continue;
+            for (let i = 0; i < requestList.length; i++) {
+                let requests = requestList.slice(i * 3, i * 3 + 3);
+                if (requests.length > 0) {
+                    console.log(requests);
+                    let requestResponseList = yield RequestService_1.requestService.sendList(requestList);
+                    let j = 0;
+                    for (let response of requestResponseList) {
+                        if (response.status != 200) {
+                            continue;
+                        }
+                        commandList[i * 3 + j].setResponse(yield this.buildResponse(response.data));
+                        j++;
+                        responseCiredList.push(yield this.buildResponse(response.data));
+                    }
                 }
-                responseCiredList.push(yield this.buildResponse(response.data));
             }
+            console.log(responseCiredList);
             return responseCiredList;
         });
     }
@@ -68,22 +80,17 @@ class CiredCoordinatorService {
             request.method = Request_1.RequestMethod.GET;
             request.path = this.requestPath;
             request.payload.query = command;
+            request.timeout = 200;
             let requestResponse;
-            for (let i = 0; i < this.retryCount; i++) {
-                try {
-                    requestResponse = (yield RequestService_1.requestService.send(request));
-                }
-                catch (error) {
-                }
-                if (requestResponse && requestResponse.status == 200) {
-                    return yield this.buildResponse(requestResponse.data);
-                }
+            try {
+                requestResponse = (yield RequestService_1.requestService.send(request));
+            }
+            catch (error) {
+            }
+            if (requestResponse && requestResponse.status == 200) {
+                return yield this.buildResponse(requestResponse.data);
             }
             return yield this.buildResponse();
-        });
-    }
-    buildRequest(coordinator) {
-        return __awaiter(this, void 0, void 0, function* () {
         });
     }
     buildResponse(ciredResponse = '') {

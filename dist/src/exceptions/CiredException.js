@@ -9,6 +9,7 @@ class CiredGenericException extends HttpException_1.BadRequestException {
 }
 exports.CiredGenericException = CiredGenericException;
 CiredGenericException.generic = { errorCode: 'CIRED_GENERIC_001' };
+CiredGenericException.scanAllreadyStarted = { errorCode: 'CIRED_GENERIC_010' };
 class CiredAddressException extends CiredGenericException {
     constructor(code = CiredGenericException.generic, message = "Cired address error") {
         super(code);
